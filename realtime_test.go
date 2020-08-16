@@ -7,9 +7,9 @@ import (
 
 func TestService_RealtimeHandler(t *testing.T) {
 	type args struct {
-		ctx              *context.Context
+		ctx              context.Context
 		realtimeInterval float64
-		pub              func(*context.Context, string, byte, []byte) error
+		pub              func(context.Context, string, byte, []byte) error
 	}
 	tests := []struct {
 		name    string
@@ -30,7 +30,7 @@ func TestService_RealtimeHandler(t *testing.T) {
 
 func TestService_RealtimeConfig(t *testing.T) {
 	type args struct {
-		ctx *context.Context
+		ctx context.Context
 	}
 	tests := []struct {
 		name    string

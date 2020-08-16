@@ -10,13 +10,13 @@ import (
 )
 
 // RealtimeHandler represent to realtime(heartbeat) handler
-func (s *Service) RealtimeHandler(ctx *context.Context, realtimeInterval float64, pub func(*context.Context, string, byte, []byte) error) (err error) {
+func (s *Service) RealtimeHandler(ctx context.Context, realtimeInterval float64, pub func(context.Context, string, byte, []byte) error) (err error) {
 	elapsed := time.Now()
 
-	go func(ctx *context.Context) {
+	go func(ctx context.Context) {
 		for {
 			select {
-			case <-(*ctx).Done():
+			case <-ctx.Done():
 				return
 			case <-s.heartbeat:
 				period := time.Duration(int(s.OI.RealtimeLength*150/100)) * time.Second
@@ -58,7 +58,7 @@ func (s *Service) RealtimeHandler(ctx *context.Context, realtimeInterval float64
 }
 
 // RealtimeConfig  represent to handle realtime config
-func (s *Service) RealtimeConfig(ctx *context.Context) (err error) {
+func (s *Service) RealtimeConfig(ctx context.Context) (err error) {
 	s.heartbeat <- true
 	return
 }
