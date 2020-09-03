@@ -50,6 +50,7 @@ type wellbeingHistorical struct {
 }
 type locationDatabase struct {
 	Locations []location `json:"locations"`
+        Detection int `json:"detection"` // backward compatibility
 }
 type location struct {
 	Detection int    `faker:"boundary_start=0, boundary_end=2" json:"detection"`
@@ -74,7 +75,7 @@ type historyFn func(string, EngineType) ([]byte, error)
 func (s *Service) History() (result []byte, err error) {
 	switch s.EngineType {
 	case SoftSecurity:
-		return s.ssHistory()
+		return s.ssHistoryv2()
 	case Wellbeing:
 		return s.wellbeingHistory()
 	case Location:
@@ -178,4 +179,27 @@ func wellbeingPayload(h wH, wht WellbeingHistoricalType) (wH, error) {
 	default:
 		return h, ErrWellbeingHistoricalNotSupport
 	}
+}
+func (s *Service) ssHistoryv2() (result []byte, err error) {
+
+	h := lH{
+		baseH: baseH{
+			Timestamp:  time.Now().Unix(),
+			EngineType: s.EngineType,
+			ServiceID:  s.ServiceID,
+		},
+		Database: locationDatabase{
+			Locations: []location{},
+		},
+	}
+	for _, v := range s.Bots {
+
+		l := location{
+			Detection: rand.Intn(2),
+			DeviceID:  v,
+		}
+		h.Database.Locations = append(h.Database.Locations, l)
+	}
+	result, err = json.Marshal(h)
+	return
 }
